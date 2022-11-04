@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Luigi Marchionni
-%% August 21 2008
+%% Nov  2022
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -45,6 +45,7 @@ email: \texttt{marchion@jhu.edu}}
 <<start,eval=TRUE,echo=FALSE,cache=FALSE,>>=
 options(width=50)
 rm(list=ls())
+set.seed(9)
 @ 
 
 \section{Overview}
@@ -169,24 +170,25 @@ str(go[1:5])
 names(go)[1:5]
 @
 
-In the \Robject{KEGG} list genes are identified by their ENTREZ Gene identifiers,
+In the \Robject{kegg} list genes are identified by their ENTREZ Gene identifiers,
 while in the \Robject{dat} genes are identified by their Gene Symbol.
 Below is an example of the code that can be used to perform the identifiers conversion,
 using only a subset of KEGG and GO FGS:
 
 <<convertIDs,eval=TRUE,echo=TRUE,cache=FALSE>>=
-kegg <- lapply(kegg[sample(1:length(kegg),5)],function(x) unique(unlist(mget(x,org.Hs.egSYMBOL))))
+someKeggID <- c("00450", "04971", "00970", "04260", "05320")
+kegg <- lapply(kegg[someKeggID],function(x) unique(unlist(mget(x,org.Hs.egSYMBOL))))
 go <- lapply(go[sample(1:length(go),5)],function(x) unique(unlist(mget(x,org.Hs.egSYMBOL))))
 str(kegg)
 str(go)
 @ 
 
 Finally, it is also possible to annotate FGS, mapping pathways identifiers to pathway names,
-as shown below for KEGG, using the \Rpackage{KEGGRESt}.
+as shown below for KEGG, using the \Rpackage{KEGGREST}.
 
 <<annotateFGS,eval=TRUE,echo=TRUE,cache=FALSE>>=
 library(KEGGREST)
-names(kegg) <-  sapply(keggGet(paste0("hsa", names(kegg)[1:5])), "[[", "NAME")
+names(kegg) <-  sapply(keggGet(paste0("hsa", someKeggID)), "[[", "NAME")
 @ 
 
 Similarly GO Terms can be retrieved from the \Rpackage{GO.db}
